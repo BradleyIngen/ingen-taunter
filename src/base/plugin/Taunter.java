@@ -87,9 +87,9 @@ public class Taunter extends JavaPlugin
         @EventHandler
         public void onPlayerLogin(PlayerLoginEvent event)
         {
-            if (flags[0])
+            if (flags[0] && taunts.size() > 0)
             {
-                event.getPlayer().sendMessage(taunts.get(getRandom(0,taunts.size())));
+                event.getPlayer().sendMessage(taunts.get(getRandom(0,taunts.size()-1)));
             }
         }
     }
