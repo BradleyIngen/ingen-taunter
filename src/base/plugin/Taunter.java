@@ -78,7 +78,7 @@ public class Taunter extends JavaPlugin
         @EventHandler
         public void onPlayerLogin(PlayerLoginEvent event)
         {
-
+            // todo: handle player login
         }
     }
 }
