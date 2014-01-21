@@ -1,8 +1,12 @@
 package base.plugin;
 
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,6 +20,7 @@ import java.util.Random;
 public class Taunter extends JavaPlugin
 {
     private ArrayList<String> taunts;
+    private ArrayList<String> deathTaunts;
     private File folder, login, death;
     private boolean[] flags = {false,false};
 
@@ -25,6 +30,19 @@ public class Taunter extends JavaPlugin
         login = new File(folder, "loginmessages.yml");
         death = new File(folder, "deathmessages.yml");
         // todo: read YML config for taunt list
+    }
+
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
+    {
+        String commandText = command.getLabel().toLowerCase();
+        if (commandText.equals("taunter"))
+        {
+            if (args[0].equalsIgnoreCase("reload"))
+            {
+                // todo: reload
+            }
+        }
+        return false;
     }
 
     public int getRandom(int bottom, int top)
@@ -90,6 +108,19 @@ public class Taunter extends JavaPlugin
             if (flags[0] && taunts.size() > 0)
             {
                 event.getPlayer().sendMessage(taunts.get(getRandom(0,taunts.size()-1)));
+            }
+        }
+
+        @EventHandler
+        public void onPlayerDeath(PlayerDeathEvent event)
+        {
+            if (flags[1] && deathTaunts.size() > 0)
+            {
+                for (Player p : Bukkit.getOnlinePlayers())
+                {
+                    // todo: add logic for functions
+                    p.sendMessage("");
+                }
             }
         }
     }
