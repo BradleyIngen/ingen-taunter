@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * @author 2mac
@@ -16,6 +17,7 @@ public class Taunter extends JavaPlugin
 {
     private ArrayList<String> taunts;
     private File folder, login, death;
+    private boolean[] flags = {false,false};
 
     Taunter()
     {
@@ -23,6 +25,13 @@ public class Taunter extends JavaPlugin
         login = new File(folder, "loginmessages.yml");
         death = new File(folder, "deathmessages.yml");
         // todo: read YML config for taunt list
+    }
+
+    public int getRandom(int bottom, int top)
+    {
+        Random dice = new Random();
+        int dif = top - bottom;
+        return bottom + dice.nextInt(dif+1);
     }
 
     public void onEnable()
@@ -78,7 +87,10 @@ public class Taunter extends JavaPlugin
         @EventHandler
         public void onPlayerLogin(PlayerLoginEvent event)
         {
-            // todo: handle player login
+            if (flags[0])
+            {
+                event.getPlayer().sendMessage(taunts.get(getRandom(0,taunts.size())));
+            }
         }
     }
 }
