@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -55,6 +56,9 @@ public class Taunter extends JavaPlugin
     public void onEnable()
     {
         generateDefaults();
+
+        PluginManager pm = this.getServer().getPluginManager();
+        pm.registerEvents(new PlayerLoginListener(this), this);
     }
 
     private void generateDefaults()
