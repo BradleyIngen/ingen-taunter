@@ -108,11 +108,6 @@ public class Taunter extends JavaPlugin
         return false;
     }
 
-    private void sendLoginTaunt(Player x)
-    {
-        //stuff
-    }
-
     private class PlayerLoginListener implements Listener
     {
         private Taunter plugin;
