@@ -3,6 +3,8 @@ package base.plugin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,6 +14,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -22,16 +25,12 @@ public class Taunter extends JavaPlugin
 {
     private ArrayList<String> taunts;
     private ArrayList<String> deathTaunts;
-    private File folder, login, death;
+    private File loginFile, deathFile;
+    private YamlConfiguration login, death;
     private boolean[] flags = {false,false};
 
-    Taunter()
-    {
-        folder = new File("plugins" + File.separator + "Taunter");
-        login = new File(folder, "loginmessages.yml");
-        death = new File(folder, "deathmessages.yml");
-        // todo: read YML config for taunt list
-    }
+    public Taunter()
+    {}
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
@@ -55,42 +54,58 @@ public class Taunter extends JavaPlugin
 
     public void onEnable()
     {
-        generateDefaults();
+        login = new YamlConfiguration();
+        death = new YamlConfiguration();
+        taunts = new ArrayList<>();
+        deathTaunts = new ArrayList<>();
+        loginFile = new File(getDataFolder(), "loginmessages.yml");
+        deathFile = new File(getDataFolder(), "deathmessages.yml");
+        loadYamls();
+        if (populateLists())
+        {
+            getLogger().info("Ready to taunt!");
+        }
 
         PluginManager pm = this.getServer().getPluginManager();
         pm.registerEvents(new PlayerLoginListener(this), this);
     }
 
-    private void generateDefaults()
+    private void loadYamls()
     {
-
-        // make working directory
-        if (!folder.exists())
+        try
         {
-            try
+            login.load(loginFile);
+            death.load(deathFile);
+        } catch (IOException | InvalidConfigurationException e)
+        {
+            getLogger().severe("Could not load YML files");
+            e.printStackTrace();
+        }
+    }
+
+    private boolean populateLists()
+    {
+        try
+        {
+            for (int i = 0; i < login.getStringList("taunts").size(); i++)
             {
-                folder.mkdir();
+                getLogger().info("Added taunt: " + login.getStringList("taunts").get(i));
+                taunts.add(login.getStringList("taunts").get(i));
             }
-            catch (Exception e)
+
+            for (int i = 0; i < death.getStringList("taunts").size(); i++)
             {
-                getLogger().severe("Could not create working directory for Taunter!");
-                getPluginLoader().disablePlugin(this);
+                deathTaunts.add(death.getStringList("taunts").get(i));
             }
+
+            return true;
+        } catch (Exception e)
+        {
+            getLogger().severe("Could not populate taunt lists!");
+            e.printStackTrace();
         }
 
-        // generate config
-        if (!getConfig().get("loginmessages").equals(true) && !getConfig().get("loginmessages").equals(false))
-        {
-            getConfig().set("loginmessages", true);
-        }
-        if (!getConfig().get("deathmessages").equals(true) && !getConfig().get("deathmessages").equals(false))
-        {
-            getConfig().set("deathmessages", true);
-        }
-        saveConfig();
-
-        // generate login messages file
-        // generate death messages file
+        return false;
     }
 
     private void sendLoginTaunt(Player x)
@@ -112,6 +127,7 @@ public class Taunter extends JavaPlugin
             if (flags[0] && taunts.size() > 0)
             {
                 event.getPlayer().sendMessage(taunts.get(getRandom(0,taunts.size()-1)));
+                getLogger().info("Taunted " + event.getPlayer().getName() + " for logging in.");
             }
         }
 
