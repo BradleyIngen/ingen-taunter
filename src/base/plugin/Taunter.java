@@ -131,11 +131,7 @@ public class Taunter extends JavaPlugin
         {
             if (flags[1] && deathTaunts.size() > 0)
             {
-                for (Player p : Bukkit.getOnlinePlayers())
-                {
-                    // todo: add logic for functions
-                    p.sendMessage("");
-                }
+                Bukkit.broadcastMessage("Someone died.");
             }
         }
     }
