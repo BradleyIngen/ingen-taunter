@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,7 +28,7 @@ public class Taunter extends JavaPlugin
     private ArrayList<String> deathTaunts;
     private File loginFile, deathFile;
     private YamlConfiguration login, death;
-    private boolean[] flags = {false,false};
+    private boolean[] flags = {true,true};
 
     public Taunter()
     {}
@@ -66,7 +67,7 @@ public class Taunter extends JavaPlugin
             getLogger().info("Ready to taunt!");
         }
 
-        PluginManager pm = this.getServer().getPluginManager();
+        PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new PlayerLoginListener(this), this);
     }
 
@@ -89,7 +90,6 @@ public class Taunter extends JavaPlugin
         {
             for (int i = 0; i < login.getStringList("taunts").size(); i++)
             {
-                getLogger().info("Added taunt: " + login.getStringList("taunts").get(i));
                 taunts.add(login.getStringList("taunts").get(i));
             }
 
@@ -117,11 +117,11 @@ public class Taunter extends JavaPlugin
         }
 
         @EventHandler
-        public void onPlayerLogin(PlayerLoginEvent event)
+        public void onPlayerLogin(PlayerJoinEvent event)
         {
             if (flags[0] && taunts.size() > 0)
             {
-                event.getPlayer().sendMessage(taunts.get(getRandom(0,taunts.size()-1)));
+                event.getPlayer().sendMessage(taunts.get(getRandom(0, taunts.size() - 1)));
                 getLogger().info("Taunted " + event.getPlayer().getName() + " for logging in.");
             }
         }
