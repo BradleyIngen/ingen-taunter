@@ -5,12 +5,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -68,7 +66,7 @@ public class Taunter extends JavaPlugin
         }
 
         PluginManager pm = Bukkit.getPluginManager();
-        pm.registerEvents(new PlayerLoginListener(this), this);
+        pm.registerEvents(new TauntTimeListener(this), this);
     }
 
     private void loadYamls()
@@ -108,10 +106,10 @@ public class Taunter extends JavaPlugin
         return false;
     }
 
-    private class PlayerLoginListener implements Listener
+    private class TauntTimeListener implements Listener
     {
         private Taunter plugin;
-        PlayerLoginListener(Taunter t)
+        TauntTimeListener(Taunter t)
         {
             plugin = t;
         }
@@ -131,7 +129,8 @@ public class Taunter extends JavaPlugin
         {
             if (flags[1] && deathTaunts.size() > 0)
             {
-                Bukkit.broadcastMessage("Someone died.");
+                Bukkit.broadcastMessage(deathTaunts.get(getRandom(0, deathTaunts.size() - 1)));
+                getLogger().info("Taunted " + event.getEntity().getName() + " for dying.");
             }
         }
     }
