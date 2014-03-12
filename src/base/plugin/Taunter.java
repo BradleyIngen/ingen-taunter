@@ -69,7 +69,7 @@ public class Taunter extends JavaPlugin
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new TauntTimeListener(this), this);
     }
-//Because Youtube said so...
+    //Because Youtube said so...
     @Override
     public void onDisable() {
         
